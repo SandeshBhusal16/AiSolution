@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Hello",
+    "description": "djxhbcdhuhdhcd",
+    "eventDate": "2026-06-03",
+    "location": "Nepal, ktm",
+    "imageUrl": "/uploads/event-1780390869284-bec31d15.jpg",
+    "id": "b6683053-1c66-4c03-b001-c17aefe70187",
+    "createdAt": "2026-06-02T09:01:09.287Z",
+    "updatedAt": "2026-06-02T09:01:09.287Z"
+  },
+  {
+    "id": "evt-ai-summit-2026",
+    "title": "AI for Business Summit 2026",
+    "description": "A full-day summit exploring how AI-powered virtual assistants and automation are transforming modern businesses. Expect keynotes, live product demos and plenty of networking with the AI-Solution team.",
+    "eventDate": "2026-07-15",
+    "location": "Sunderland Software Centre, UK",
+    "imageUrl": "/uploads/sample-event-ai-summit.svg",
+    "createdAt": "2026-05-02T09:00:00.000Z",
+    "updatedAt": "2026-05-02T09:00:00.000Z"
+  },
+  {
+    "id": "evt-prototyping-workshop",
+    "title": "Hands-on Prototyping Workshop",
+    "description": "A practical, hands-on workshop where you will build a working AI prototype in a single day using our affordable prototyping approach. Ideal for product managers, founders and developers.",
+    "eventDate": "2026-08-20",
+    "location": "Online (Live)",
+    "imageUrl": "/uploads/sample-event-prototyping.svg",
+    "createdAt": "2026-05-10T10:30:00.000Z",
+    "updatedAt": "2026-05-10T10:30:00.000Z"
+  },
+  {
+    "id": "evt-assistant-demo-day",
+    "title": "Virtual Assistant Live Demo Day",
+    "description": "Join us for a live demonstration of the AI-Solution virtual assistant. See how it handles customer questions, automates tasks and integrates with everyday business tools.",
+    "eventDate": "2026-09-10",
+    "location": "Newcastle Innovation Hub, UK",
+    "imageUrl": "/uploads/sample-event-assistant.svg",
+    "createdAt": "2026-05-18T14:00:00.000Z",
+    "updatedAt": "2026-05-18T14:00:00.000Z"
+  }
+]

@@ -1,0 +1,80 @@
+[
+  {
+    "id": "reg-001",
+    "fullName": "Liam Foster",
+    "email": "liam.foster@grangetech.co.uk",
+    "phone": "+44 7700 900333",
+    "companyName": "Grange Tech",
+    "country": "United Kingdom",
+    "eventName": "AI for Business Summit 2026",
+    "message": "Looking forward to the keynote sessions.",
+    "status": "New",
+    "createdAt": "2026-05-25T09:00:00.000Z",
+    "updatedAt": "2026-05-25T09:00:00.000Z"
+  },
+  {
+    "id": "reg-002",
+    "fullName": "Ava Martinez",
+    "email": "ava.martinez@solanaapps.com",
+    "phone": "+1 305 555 0166",
+    "companyName": "Solana Apps",
+    "country": "United States",
+    "eventName": "Hands-on Prototyping Workshop",
+    "message": "Will bring two team members along.",
+    "status": "Contacted",
+    "createdAt": "2026-05-21T14:20:00.000Z",
+    "updatedAt": "2026-05-22T08:00:00.000Z"
+  },
+  {
+    "id": "reg-003",
+    "fullName": "Rajesh Patel",
+    "email": "rajesh.patel@novaindia.in",
+    "phone": "+91 99876 54321",
+    "companyName": "Nova India",
+    "country": "India",
+    "eventName": "Virtual Assistant Live Demo Day",
+    "message": "Interested in the integration demo.",
+    "status": "New",
+    "createdAt": "2026-05-19T11:10:00.000Z",
+    "updatedAt": "2026-05-19T11:10:00.000Z"
+  },
+  {
+    "id": "reg-004",
+    "fullName": "Freya Andersen",
+    "email": "freya.andersen@fjordworks.no",
+    "phone": "+47 912 34 567",
+    "companyName": "Fjord Works",
+    "country": "Norway",
+    "eventName": "AI for Business Summit 2026",
+    "message": "Do you offer recordings for remote attendees?",
+    "status": "In Progress",
+    "createdAt": "2026-05-14T16:30:00.000Z",
+    "updatedAt": "2026-05-18T10:00:00.000Z"
+  },
+  {
+    "id": "reg-005",
+    "fullName": "Tom Baker",
+    "email": "tom.baker@wearside.co.uk",
+    "phone": "+44 7700 900444",
+    "companyName": "Wearside Media",
+    "country": "United Kingdom",
+    "eventName": "Hands-on Prototyping Workshop",
+    "message": "Excited to build a prototype on the day.",
+    "status": "Completed",
+    "createdAt": "2026-05-09T08:45:00.000Z",
+    "updatedAt": "2026-05-12T09:30:00.000Z"
+  },
+  {
+    "id": "reg-006",
+    "fullName": "Mia Nguyen",
+    "email": "mia.nguyen@saigonsoft.vn",
+    "phone": "+84 90 123 4567",
+    "companyName": "Saigon Soft",
+    "country": "Other",
+    "eventName": "Virtual Assistant Live Demo Day",
+    "message": "Hoping to see multilingual assistant support.",
+    "status": "New",
+    "createdAt": "2026-04-30T13:15:00.000Z",
+    "updatedAt": "2026-04-30T13:15:00.000Z"
+  }
+]
