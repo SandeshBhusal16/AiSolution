@@ -1,16 +1,34 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { Redis } from "@upstash/redis";
 import type { BaseRecord } from "@/lib/types";
+
+// Committed seed data. Importing the JSON guarantees it is bundled into the
+// serverless build (a runtime fs read of /data is NOT reliable on Vercel), so
+// production starts with the same records you have locally.
+import adminsSeed from "@/data/admins.json";
+import inquiriesSeed from "@/data/inquiries.json";
+import demoRequestsSeed from "@/data/demoRequests.json";
+import eventRegistrationsSeed from "@/data/eventRegistrations.json";
+import eventsSeed from "@/data/events.json";
 
 /**
  * lib/json-db.ts
  * -----------------------------------------------------------------------------
- * A tiny, reusable file-based "database" for the prototype. All data lives in
- * readable JSON arrays inside the /data folder at the project root. These
- * helpers create files on demand, read/parse them safely and write them back
- * with pretty-printing so they are easy to inspect during a demo.
+ * A tiny, reusable "database" for the prototype with TWO storage backends that
+ * share one identical API:
  *
- * Only ever import this from server-side code (API routes / server actions).
+ *   • Production (Vercel): Upstash Redis. Vercel's filesystem is read-only at
+ *     runtime, so writing JSON files there fails — every collection is stored
+ *     as a single JSON value in Redis instead. On first access a collection is
+ *     auto-seeded from the committed JSON above, so live data appears with no
+ *     manual migration.
+ *
+ *   • Local development: plain JSON files in /data (when no Redis env vars are
+ *     set), so you keep the readable, inspectable files during a demo.
+ *
+ * The backend is chosen automatically from the environment. Only ever import
+ * this from server-side code (API routes / server actions).
  */
 
 /** Absolute path to the /data folder, resolved from the project root. */
@@ -27,6 +45,36 @@ export const FILES = {
 
 export type FileName = (typeof FILES)[keyof typeof FILES];
 
+/** Committed seed records, keyed by file name, used to initialise Redis. */
+const SEED_DATA: Record<string, unknown[]> = {
+  [FILES.admins]: adminsSeed as unknown[],
+  [FILES.inquiries]: inquiriesSeed as unknown[],
+  [FILES.demoRequests]: demoRequestsSeed as unknown[],
+  [FILES.eventRegistrations]: eventRegistrationsSeed as unknown[],
+  [FILES.events]: eventsSeed as unknown[],
+};
+
+// --- Backend selection ------------------------------------------------------
+
+const REDIS_URL =
+  process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const REDIS_TOKEN =
+  process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
+
+/** True when Upstash/Vercel KV credentials are configured. */
+export const usingRedis = Boolean(REDIS_URL && REDIS_TOKEN);
+
+const redis = usingRedis
+  ? new Redis({ url: REDIS_URL as string, token: REDIS_TOKEN as string })
+  : null;
+
+/** Redis key for a given collection, e.g. "aisolution:events.json". */
+function redisKey(fileName: string): string {
+  return `aisolution:${fileName}`;
+}
+
+// --- Filesystem helpers (local development backend) -------------------------
+
 /** Ensure the /data directory exists before any file operation. */
 async function ensureDataDir(): Promise<void> {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -39,7 +87,7 @@ export function dataFilePath(fileName: string): string {
 
 /**
  * Create the JSON file with default contents (an empty array) if it does not
- * already exist. Returns the absolute file path.
+ * already exist. Returns the absolute file path. (Filesystem backend only.)
  */
 export async function ensureFileExists(
   fileName: string,
@@ -55,11 +103,27 @@ export async function ensureFileExists(
   return filePath;
 }
 
+// --- Public read/write API (backend-agnostic) ------------------------------
+
 /**
- * Read and parse a JSON file as an array of T. Missing or corrupted files fail
- * safe by returning an empty array (and recreating the file when missing).
+ * Read and parse a collection as an array of T. Missing or corrupted data fails
+ * safe by returning an empty array. With Redis, a missing key is auto-seeded
+ * from the committed JSON the first time it is read.
  */
 export async function readJsonFile<T>(fileName: string): Promise<T[]> {
+  if (redis) {
+    const key = redisKey(fileName);
+    const stored = await redis.get<T[]>(key);
+    if (stored === null || stored === undefined) {
+      // First access: seed Redis from the committed JSON, then return it.
+      const seed = (SEED_DATA[fileName] ?? []) as T[];
+      await redis.set(key, seed);
+      return seed;
+    }
+    return Array.isArray(stored) ? stored : [];
+  }
+
+  // Filesystem backend.
   const filePath = await ensureFileExists(fileName, []);
   try {
     const raw = await fs.readFile(filePath, "utf-8");
@@ -72,11 +136,15 @@ export async function readJsonFile<T>(fileName: string): Promise<T[]> {
   }
 }
 
-/** Write an array to a JSON file using safe, pretty-printed formatting. */
+/** Write an array to a collection (Redis value, or pretty-printed JSON file). */
 export async function writeJsonFile<T>(
   fileName: string,
   data: T[],
 ): Promise<void> {
+  if (redis) {
+    await redis.set(redisKey(fileName), data);
+    return;
+  }
   await ensureDataDir();
   const filePath = dataFilePath(fileName);
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
